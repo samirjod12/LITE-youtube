@@ -1,0 +1,42 @@
+name: Build Windows portable
+
+on:
+  workflow_dispatch:
+  push:
+    tags: ["v*"]
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          architecture: x64
+
+      - name: Download mpv (x86_64, NOT the v3/AVX2 build)
+        shell: pwsh
+        run: |
+          # Latest shinchiro build; pick the plain x86_64 archive (not x86_64-v3).
+          $rel = Invoke-RestMethod https://api.github.com/repos/shinchiro/mpv-winbuild-cmake/releases/latest
+          $asset = $rel.assets | Where-Object { $_.name -match '^mpv-x86_64-\d' -and $_.name -notmatch 'v3' -and $_.name -match '\.7z$' } | Select-Object -First 1
+          if (-not $asset) { throw "No plain x86_64 mpv archive found in the latest release." }
+          Write-Host "Using $($asset.name)"
+          Invoke-WebRequest $asset.browser_download_url -OutFile mpv.7z
+          7z x mpv.7z -othird_party\mpv -y | Out-Null
+          if (-not (Test-Path third_party\mpv\mpv.exe)) { throw "mpv.exe missing after extraction" }
+
+      - name: Build
+        shell: cmd
+        run: build_windows.bat
+
+      - name: Zip portable folder
+        shell: pwsh
+        run: Compress-Archive -Path dist\YouTube-Lite -DestinationPath YouTube-Lite-portable-win64.zip
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: YouTube-Lite-portable-win64
+          path: YouTube-Lite-portable-win64.zip

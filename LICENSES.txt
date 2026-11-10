@@ -1,0 +1,27 @@
+YOUTUBE LITE - THIRD-PARTY SOFTWARE
+
+YouTube Lite's own source code: provided as-is by the project author; choose and
+add a license of your own before redistributing.
+
+Components used or bundled (check each project for the authoritative, current
+license text and for any obligations when you redistribute a build):
+
+* Python - Python Software Foundation License - https://docs.python.org/3/license.html
+* Qt for Python / PySide6 and the Qt libraries - LGPLv3 (and other terms per
+  module) - https://doc.qt.io/qtforpython-6/licenses.html
+  Qt is dynamically linked in the one-folder build, so users can replace the Qt
+  libraries in the "_internal" folder. Redistributors must provide the LGPL text
+  and notices.
+* yt-dlp - The Unlicense (public domain dedication) - https://github.com/yt-dlp/yt-dlp
+* PyInstaller (build tool, bootloader included in the app) - GPLv2+ with a
+  special exception permitting use for any program - https://pyinstaller.org
+* mpv (NOT included in the source; you add mpv.exe) - GPLv2+ by default, builds
+  may be LGPLv2.1+ - https://mpv.io  (includes FFmpeg and other libraries under
+  their own licenses; see the license information of the build you download).
+
+No YouTube/Google code is included. YouTube is a trademark of Google LLC; this
+project is independent and not affiliated with or endorsed by YouTube or Google.
+Using YouTube content is subject to YouTube's Terms of Service.
+
+NOTE: this file is a summary, not legal advice. Full license texts are available
+at the links above and should accompany any binary you distribute.

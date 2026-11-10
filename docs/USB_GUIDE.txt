@@ -1,0 +1,33 @@
+YOUTUBE LITE - USB / PORTABLE GUIDE
+
+SETUP
+ 1. Build with build_windows.bat on a PC with 64-bit Python (or get a ready
+    dist\YouTube-Lite folder), and make sure dist\YouTube-Lite\mpv\mpv.exe exists.
+ 2. Copy the whole YouTube-Lite folder to the USB drive (any folder name works,
+    keep its contents together).
+ 3. On the laptop: open the folder and run YouTube-Lite.exe. No installation,
+    no administrator rights, no registry changes.
+
+DRIVE ADVICE
+ * Use a USB 3.0 stick if the laptop has a USB 3.0 port; plain USB 2.0 is fine.
+ * Format: NTFS or exFAT. FAT32 works too (no file is bigger than 4 GB).
+ * Settings, history and caches are written to the stick. Cheap sticks are slow
+   at small writes; ECO mode keeps writing to a minimum.
+ * Caches are limited (thumbnails 30 MB, metadata 5 MB, logs 2 MB by default).
+
+SAFE REMOVAL
+ * Close YouTube Lite first (this also closes mpv), then use "Safely remove
+   hardware". The database uses a rollback journal with full sync, so a sudden
+   unplug normally loses at most the last change, but do not rely on it.
+ * If the drive disappears while the program runs, operations that need it show
+   a message ("The drive ... is not available") instead of crashing. Re-insert
+   the drive; if it got a new letter, close and reopen the program from there.
+ * If the drive is write-protected or full, the program warns you and keeps
+   working without saving.
+
+MOVING BETWEEN COMPUTERS
+ All paths are relative to the program folder, so the folder can be copied or
+ moved. Nothing is stored on the host PC. The target PC must be 64-bit Windows 10.
+
+REMOVING EVERYTHING
+ Settings > Storage > "Delete ALL local data", then delete the folder.

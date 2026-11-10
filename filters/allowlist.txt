@@ -1,0 +1,1 @@
+# YouTube Lite - allowlist. Domains here are never blocked, even if on a blocklist.

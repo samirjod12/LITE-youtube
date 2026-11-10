@@ -1,0 +1,68 @@
+YOUTUBE LITE - TROUBLESHOOTING
+
+THE PROGRAM DOES NOT START
+ * "PySide6 is missing or cannot load" / nothing happens: you need 64-bit
+   Windows 10. Check Settings > System > About > System type.
+ * Antivirus quarantined files in _internal: restore them or add an exception
+   for the folder (PyInstaller programs are sometimes flagged wrongly).
+ * Look at logs\youtube-lite.log.
+
+"mpv was not found" / VIDEO DOES NOT OPEN
+ * Put mpv.exe into the "mpv" folder (README, "Getting mpv").
+ * "mpv could not be started": the file is damaged, blocked (right-click >
+   Properties > Unblock), or is a 32-bit build / an x86_64-v3 (AVX2) build.
+   The Celeron 847 has no AVX/AVX2: use the plain x86_64 build.
+ * Exit code 1 from mpv: video-driver initialisation failed. In Settings >
+   Playback set Hardware decoding to "Software only" and try again; update the
+   Intel graphics driver.
+ * Exit code 2: the stream could not be played (expired link, blocked host, or
+   unsupported format). Press "Open player" again to retry; if the page was open
+   for a long time, click the video again to refresh the link.
+
+SEARCH / PLAYBACK STOPPED WORKING ("yt-dlp probably needs to be updated")
+ YouTube changes often; the bundled yt-dlp then fails with messages such as
+ "Unable to extract", HTTP 403, or "Sign in to confirm you're not a bot".
+ YouTube Lite deliberately does not download and run code at runtime. To update:
+ on any PC with 64-bit Python run build_windows.bat again (it installs the
+ newest yt-dlp), and copy the new YouTube-Lite folder over the old one (your
+ config, data, cache and filters folders can be kept). Recent yt-dlp versions
+ may also need extra components for some videos; check the yt-dlp project's
+ documentation if updating alone does not help.
+ "Sign in to confirm you're not a bot" can also be caused by the network
+ (shared/VPN/mobile-hotspot addresses). Try another network or wait.
+
+THE VIDEO STUTTERS / DROPS FRAMES
+ * Look at the live line on the player page: "decoding: software" means the
+   Intel GPU is not decoding it. Pick a lower quality (480p, 360p, 240p).
+ * Prefer streams marked H.264. VP9/AV1/HEVC use the CPU on this laptop.
+ * Settings > Playback: try "Automatic, copy-back" hardware decoding, or enable
+   "Fast software decode assist". Close other programs (especially browsers).
+ * Use ECO mode, and a wired or strong Wi-Fi connection.
+
+"hardware decoding" never shows
+ Old Intel HD Graphics drivers may lack decode support under Windows 10. Update
+ the driver from the laptop vendor. If it still reports software decoding,
+ stay at 480p or lower.
+
+MEMORY IS HIGH
+ Use ECO mode, close the Web Mode browser, Settings > Storage > clear caches,
+ and check Settings > About > "Measure memory now". Note mpv is a separate
+ process and uses its own memory (cache is limited to 48 MiB by mpv.conf).
+
+SAVED DATA PROBLEMS
+ * "Settings could not be saved": the drive is read-only, full or removed.
+ * settings.json.bad: the settings file was damaged; defaults were restored and
+   the bad file was kept for inspection.
+ * "Database unavailable": data\history.db cannot be opened (drive removed,
+   locked or corrupt). Rename the file to history.db.old to start fresh.
+
+AGE-RESTRICTED / PRIVATE / REGION-LOCKED / MEMBERS-ONLY VIDEOS
+ These need an account or are blocked for your country. YouTube Lite never signs
+ in and does not bypass restrictions or DRM. Use Web Mode in your browser.
+
+LIVE STREAMS
+ Not supported in this version. Use Web Mode.
+
+REPORTING A PROBLEM
+ Include: Windows version (32/64-bit), Settings > About text, the message shown
+ and logs\youtube-lite.log (it contains no passwords or personal data).

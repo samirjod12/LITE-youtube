@@ -1,0 +1,11 @@
+# YouTube Lite - custom blocklist (one domain per line, # for comments).
+# Used only when the ad blocker is switched ON. See README for what it controls.
+# YouTube/Google playback and sign-in domains are protected and can never be blocked.
+doubleclick.net
+googlesyndication.com
+googleadservices.com
+google-analytics.com
+googletagmanager.com
+googletagservices.com
+adservice.google.com
+2mdn.net

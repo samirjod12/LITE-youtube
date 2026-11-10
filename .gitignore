@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+.venv-build/
+build/
+dist/
+*.spec
+config/settings.json
+data/
+cache/
+logs/
+third_party/mpv/*
+!third_party/mpv/.gitkeep
