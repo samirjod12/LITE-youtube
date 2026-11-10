@@ -3,6 +3,7 @@ name: Build Windows portable
 on:
   workflow_dispatch:
   push:
+    branches: [main]
     tags: ["v*"]
 
 jobs:
