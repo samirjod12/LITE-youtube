@@ -92,9 +92,12 @@ class ConfigTests(unittest.TestCase):
             self.assertNotIn("unknown", s.data)
 
     def test_save_failure_is_reported_not_raised(self):
-        s = config.Settings(Path("/proc/definitely/not/writable/s.json"))
-        self.assertFalse(s.save())
-        self.assertTrue(s.last_error)
+        with tempfile.TemporaryDirectory() as t:
+            blocker_file = Path(t) / "iamafile"
+            blocker_file.write_text("x")          # a file where a folder is needed: fails on every OS
+            s = config.Settings(blocker_file / "sub" / "s.json")
+            self.assertFalse(s.save())
+            self.assertTrue(s.last_error)
 
     def test_celeron_preset(self):
         s = config.Settings(Path("x.json"))
@@ -177,7 +180,9 @@ class DbTests(unittest.TestCase):
         self.s.close()
         with self.assertRaises(db.StorageError):
             self.s.add_search("x")
-        bad = db.Storage(Path("/proc/nope/h.db"))
+        blocker_file = Path(self.tmp.name) / "iamafile"
+        blocker_file.write_text("x")
+        bad = db.Storage(blocker_file / "sub" / "h.db")
         self.assertFalse(bad.open())
         self.assertFalse(bad.available)
 
@@ -223,6 +228,9 @@ class CacheTests(unittest.TestCase):
             for h in lg.handlers:
                 h.flush()
             self.assertTrue((Path(t) / "logs" / "a.log").exists())
+            for h in list(lg.handlers):          # Windows cannot delete a file that is still open
+                h.close()
+                lg.removeHandler(h)
 
 
 class BlockerTests(unittest.TestCase):
@@ -500,7 +508,7 @@ class PlayerTests(unittest.TestCase):
     def test_command_is_argv_list_with_separator(self):
         c = self.cmd()
         self.assertIsInstance(c, list)
-        self.assertEqual(c[0], "/x/mpv")
+        self.assertEqual(c[0], str(Path("/x/mpv")))
         self.assertIn("--no-config", c)
         self.assertIn("--hwdec=auto", c)
         self.assertIn("--audio-file=https://a/aud", c)
