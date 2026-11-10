@@ -50,12 +50,13 @@ if errorlevel 1 (
   exit /b 1
 )
 
+if not exist assets\icon.ico "%VPY%" tools\make_icon.py assets\icon.ico
 echo [5/7] Building the executable...
 if exist build rmdir /s /q build
 if exist dist\YouTube-Lite rmdir /s /q dist\YouTube-Lite
 "%VPY%" -m PyInstaller --noconfirm --clean --onedir --windowed --noupx ^
-  --name YouTube-Lite --paths src ^
-  --collect-submodules yt_dlp ^
+  --name YouTube-Lite --paths src --icon assets\icon.ico ^
+  --collect-submodules yt_dlp --collect-all yt_dlp_ejs ^
   --exclude-module tkinter ^
   --exclude-module PySide6.QtWebEngineCore --exclude-module PySide6.QtWebEngineWidgets ^
   --exclude-module PySide6.QtWebEngineQuick --exclude-module PySide6.QtQml ^
@@ -87,9 +88,18 @@ copy /y README.txt "%OUT%\" >nul
 copy /y LICENSES.txt "%OUT%\" >nul
 copy /y docs\USB_GUIDE.txt "%OUT%\" >nul
 copy /y docs\TROUBLESHOOTING.txt "%OUT%\" >nul
+copy /y docs\Uninstall-YouTube-Lite.bat "%OUT%\" >nul
 copy /y docs\PERFORMANCE_REPORT.md "%OUT%\" >nul
 
-echo [7/7] Packaging mpv...
+echo [7/7] Packaging mpv and the JavaScript runtime...
+if exist third_party\runtime\deno.exe (
+  if not exist "%OUT%\runtime" mkdir "%OUT%\runtime"
+  copy /y third_party\runtime\deno.exe "%OUT%\runtime\" >nul
+  echo     deno copied into %OUT%\runtime
+) else (
+  echo [WARNING] third_party\runtime\deno.exe not found. YouTube may refuse to play videos until
+  echo           deno.exe is placed in %OUT%\runtime\  ^(see README.txt^).
+)
 if exist third_party\mpv\mpv.exe (
   xcopy /e /i /y third_party\mpv\* "%OUT%\mpv\" >nul
   echo     mpv copied into %OUT%\mpv

@@ -15,6 +15,9 @@ IMPORTANT REQUIREMENTS
     a Celeron 847, which is a 64-bit CPU, but 2 GB is tight).
   * mpv.exe in the "mpv" folder (see "Getting mpv"). Use the standard x86_64
     build, NOT an "x86_64-v3" / AVX2 build: a Celeron 847 has no AVX/AVX2.
+  * runtime\deno.exe: the JavaScript runtime YouTube now requires (the GitHub
+    build bundles it; if you build by hand, copy deno.exe from
+    https://github.com/denoland/deno/releases into the "runtime" folder).
   * Internet connection.
 
 FIRST RUN
@@ -86,6 +89,11 @@ PRIVACY AND SECURITY
   History, playlists and settings stay in this folder. Settings > Storage has
   buttons to clear everything.
 
+UNINSTALL
+  Close YouTube Lite, then run Uninstall-YouTube-Lite.bat (inside the folder).
+  It asks for confirmation and deletes the whole folder. Or just delete the
+  folder yourself: nothing else is installed on the computer.
+
 FOLDERS (portable)
   YouTube-Lite.exe        the program   (plus a "_internal" folder with its libraries)
   config\settings.json    settings
@@ -93,6 +101,7 @@ FOLDERS (portable)
   cache\thumbnails, cache\metadata   size-limited caches (defaults 30 MB / 5 MB)
   filters\                blocklist.txt, allowlist.txt, downloaded.txt
   mpv\                    mpv.exe, mpv.conf
+  runtime\                deno.exe (needed by yt-dlp for YouTube)
   logs\                   small rotating log (default max 2 MB)
   Nothing is written to the registry, AppData, or anywhere outside this folder.
 

@@ -219,6 +219,10 @@ class MainWindow(QMainWindow):
         self.go(PAGE_PLAYER)
         self.player_page.start(item)
 
+    def open_topic(self, topic: str) -> None:
+        self.go(2)
+        self.trending.results.load({"t": "video", "q": topic}, 1)
+
     def open_channel(self, item: VideoItem) -> None:
         self.go(1)
         self.search_page.open_channel(item)

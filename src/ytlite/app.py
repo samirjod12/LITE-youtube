@@ -53,7 +53,7 @@ class AppContext:
         self.blocker.reload()
         self.blocker.enabled = bool(self.settings["adblock"]["enabled"])
 
-        self.search = SearchService()
+        self.search = SearchService(self._js_runtimes)
         ensure_conf(self.paths.mpv_conf)
         self._mpv_info: MpvInfo | None = None
         self.notify: Callable[[str], None] = lambda msg: None   # set by the main window
@@ -66,6 +66,10 @@ class AppContext:
                     path.write_text(text, encoding="utf-8")
             except OSError:
                 pass
+
+    def _js_runtimes(self) -> dict | None:
+        exe = self.paths.deno_exe()
+        return {"deno": {"path": str(exe)}} if exe else None
 
     # -- mpv ---------------------------------------------------------------
     def mpv_exe(self) -> Path | None:

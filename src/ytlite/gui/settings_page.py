@@ -445,7 +445,9 @@ class SettingsPage(QWidget):
             f"yt-dlp {ytdlp_version()}\n"
             f"mpv: {mi.version if mi else 'NOT FOUND'}"
             f"{' (bundled)' if self.ctx.paths.mpv_is_bundled() else ''}\n"
-            f"mpv location: {self.ctx.mpv_exe() or '-'}")
+            f"mpv location: {self.ctx.mpv_exe() or '-'}\n"
+            f"JavaScript runtime (deno, needed for YouTube): {self.ctx.paths.deno_exe() or 'NOT FOUND - videos may not play'}\n"
+            f"Uninstall: run Uninstall-YouTube-Lite.bat in this folder, or delete the folder.")
 
     def _measure_mem(self):
         m = process_memory()

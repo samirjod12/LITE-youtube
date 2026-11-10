@@ -77,3 +77,24 @@ QMenu::item:selected {{ background: {BLUE}; }}
 QMenu::separator {{ height: 1px; background: {BORDER}; margin: 4px 6px; }}
 QMessageBox, QDialog {{ background: {BG}; }}
 """
+
+
+def app_icon():
+    """Original icon drawn in code (blue rounded square with a white play triangle)."""
+    from PySide6.QtCore import QPointF, Qt
+    from PySide6.QtGui import QBrush, QColor, QIcon, QPainter, QPixmap, QPolygonF
+    icon = QIcon()
+    for size in (16, 24, 32, 48, 64, 128, 256):
+        pm = QPixmap(size, size)
+        pm.fill(Qt.GlobalColor.transparent)
+        p = QPainter(pm)
+        p.setRenderHint(QPainter.RenderHint.Antialiasing)
+        p.setPen(Qt.PenStyle.NoPen)
+        p.setBrush(QBrush(QColor(BLUE)))
+        p.drawRoundedRect(0, 0, size, size, size * 0.22, size * 0.22)
+        p.setBrush(QBrush(QColor("#FFFFFF")))
+        p.drawPolygon(QPolygonF([QPointF(size * 0.38, size * 0.28), QPointF(size * 0.38, size * 0.72),
+                                 QPointF(size * 0.74, size * 0.50)]))
+        p.end()
+        icon.addPixmap(pm)
+    return icon

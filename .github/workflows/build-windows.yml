@@ -29,6 +29,15 @@ jobs:
           7z x mpv.7z -othird_party\mpv -y | Out-Null
           if (-not (Test-Path third_party\mpv\mpv.exe)) { throw "mpv.exe missing after extraction" }
 
+      - name: Download Deno (JavaScript runtime that yt-dlp needs for YouTube)
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force third_party\runtime | Out-Null
+          Invoke-WebRequest https://github.com/denoland/deno/releases/latest/download/deno-x86_64-pc-windows-msvc.zip -OutFile deno.zip
+          Expand-Archive deno.zip -DestinationPath third_party\runtime -Force
+          if (-not (Test-Path third_party\runtime\deno.exe)) { throw "deno.exe missing after extraction" }
+          & third_party\runtime\deno.exe --version
+
       - name: Build
         shell: cmd
         run: build_windows.bat

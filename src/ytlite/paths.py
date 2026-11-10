@@ -46,6 +46,7 @@ class Paths:
         self.mpv_dir = r / "mpv"
         self.mpv_conf = self.mpv_dir / "mpv.conf"
         self.logs_dir = r / "logs"
+        self.runtime_dir = r / "runtime"       # deno.exe: JavaScript runtime used by yt-dlp
         self.log_file = self.logs_dir / "youtube-lite.log"
 
     def dirs(self) -> list[Path]:
@@ -82,6 +83,14 @@ class Paths:
         if bundled.is_file():
             return bundled
         found = shutil.which("mpv")
+        return Path(found) if found else None
+
+    def deno_exe(self) -> Path | None:
+        name = "deno.exe" if os.name == "nt" else "deno"
+        bundled = self.runtime_dir / name
+        if bundled.is_file():
+            return bundled
+        found = shutil.which("deno")
         return Path(found) if found else None
 
     def mpv_is_bundled(self) -> bool:

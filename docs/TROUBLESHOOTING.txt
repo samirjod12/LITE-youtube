@@ -19,6 +19,12 @@ THE PROGRAM DOES NOT START
    unsupported format). Press "Open player" again to retry; if the page was open
    for a long time, click the video again to refresh the link.
 
+VIDEO "DOES NOT PLAY" / "No playable stream" / "Unable to extract"
+ YouTube needs a JavaScript runtime. Check that runtime\deno.exe exists next to
+ YouTube-Lite.exe (Settings > About shows it). Without it most videos fail.
+ logs\youtube-lite.log records the exact yt-dlp error; logs\crash.log records
+ program crashes.
+
 SEARCH / PLAYBACK STOPPED WORKING ("yt-dlp probably needs to be updated")
  YouTube changes often; the bundled yt-dlp then fails with messages such as
  "Unable to extract", HTTP 403, or "Sign in to confirm you're not a bot".

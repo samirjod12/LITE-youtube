@@ -10,3 +10,4 @@ cache/
 logs/
 third_party/mpv/*
 !third_party/mpv/.gitkeep
+third_party/runtime/

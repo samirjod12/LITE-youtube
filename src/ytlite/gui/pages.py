@@ -125,6 +125,15 @@ class HomePage(QWidget):
         lay.addWidget(_label("Home", "Heading"))
         self.hint = _label("", "Secondary", wrap=True)
         lay.addWidget(self.hint)
+        chips = QHBoxLayout()
+        for topic in TREND_TOPICS:
+            b = QToolButton()
+            b.setObjectName("Chip")
+            b.setText(topic)
+            b.clicked.connect(lambda _c=False, t=topic: win.open_topic(t))
+            chips.addWidget(b)
+        chips.addStretch(1)
+        lay.addLayout(chips)
         lay.addWidget(_label("Recently played", "Secondary"))
         self.grid = VideoGrid(self.ctx, win.thumbs)
         lay.addWidget(self.grid, 1)
@@ -133,7 +142,7 @@ class HomePage(QWidget):
         s = self.ctx.settings
         rows = self.ctx.db(self.ctx.storage.history, s.profile.results, 0, default=[]) or []
         self.grid.set_items([VideoItem.from_dict(r) for r in rows])
-        notes = ["Nothing loads automatically. Type in the search box above to find videos."]
+        notes = ["Search above, or click a topic below to browse videos."]
         if self.ctx.mpv_exe() is None:
             notes.append("⚠ mpv.exe was not found: playback will not work until it is placed in the "
                          "'mpv' folder (see README).")

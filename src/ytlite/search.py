@@ -6,6 +6,7 @@ All methods are blocking and must run on a worker thread.
 """
 from __future__ import annotations
 
+import logging
 import re
 import time
 from dataclasses import asdict, dataclass
@@ -163,8 +164,9 @@ def ytdlp_version() -> str:
 
 
 class SearchService:
-    def __init__(self, cache_dir_getter: Callable[[], str | None] = lambda: None):
-        self._cachedir = cache_dir_getter
+    def __init__(self, js_runtimes: Callable[[], dict | None] = lambda: None):
+        # yt-dlp needs a JavaScript runtime (Deno) to read YouTube. We pass the bundled one.
+        self._js_runtimes = js_runtimes
 
     def _opts(self, **extra) -> dict:
         opts = {
@@ -173,6 +175,9 @@ class SearchService:
             "cachedir": False, "logger": _QuietLogger(), "noprogress": True,
             "no_color": True, "ignoreerrors": False, "color": {"stderr": "no_color", "stdout": "no_color"},
         }
+        runtimes = self._js_runtimes()
+        if runtimes:
+            opts["js_runtimes"] = runtimes
         opts.update(extra)
         return opts
 
@@ -182,6 +187,7 @@ class SearchService:
             with yt_dlp.YoutubeDL(opts) as ydl:
                 info = ydl.extract_info(target, download=False)
         except Exception as exc:
+            logging.getLogger("ytlite").warning("yt-dlp failed for %s: %s", target[:80], exc)
             raise from_exception(exc) from exc
         if not isinstance(info, dict):
             raise YtLiteError("unavailable", "YouTube returned no data for this request.")
