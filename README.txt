@@ -1,124 +1,122 @@
-YOUTUBE LITE 1.0.0
-Lightweight, portable YouTube desktop client for old, low-memory PCs
-(designed around: Intel Celeron 847, 1.1 GHz, 2 GB RAM, Intel HD Graphics, Windows 10)
+YOUTUBE LITE — ASUS EDITION
+============================
 
-WHAT IT IS
-  A native Python/Qt (PySide6 Widgets) program. It searches YouTube with yt-dlp
-  and plays videos in a separate mpv process. No browser engine is bundled.
-  No account, no login, no telemetry. Everything is stored in this folder.
+Target:
+- Windows 10 64-bit
+- 2 GB RAM (700 MB free at the time of design)
+- Python + Tkinter UI
+- MPV/libmpv playback engine
+- yt-dlp via MPV's ytdl_hook
+- YouTube Data API v3 search for videos and playlists
 
-IMPORTANT REQUIREMENTS
-  * 64-BIT Windows 10. The Qt GUI (PySide6) does not exist for 32-bit Windows.
-    Many 2011 laptops with 2 GB RAM were set up with 32-bit Windows. Check:
-    Settings > System > About > "System type". If it says 32-bit, this program
-    cannot run on that install (reinstalling 64-bit Windows 10 is possible on
-    a Celeron 847, which is a 64-bit CPU, but 2 GB is tight).
-  * mpv.exe in the "mpv" folder (see "Getting mpv"). Use the standard x86_64
-    build, NOT an "x86_64-v3" / AVX2 build: a Celeron 847 has no AVX/AVX2.
-  * runtime\deno.exe: the JavaScript runtime YouTube now requires (the GitHub
-    build bundles it; if you build by hand, copy deno.exe from
-    https://github.com/denoland/deno/releases into the "runtime" folder).
-  * Internet connection.
+IMPORTANT REALITY CHECK
+-----------------------
+This is a source project, not a precompiled EXE.
+It does not bundle Python, MPV, WebView2, or a browser.
+MPV hardware decoding depends on your graphics driver and codec support.
+The 30 FPS option uses MPV's fps video filter when supported. It can drop
+or duplicate frames, but cannot guarantee smooth 30 FPS on old hardware.
+The 60 FPS option clears that filter; it does not force a 60 FPS stream.
 
-FIRST RUN
-  1. Extract the folder anywhere (a USB drive is fine). No installer, no admin.
-  2. Make sure mpv\mpv.exe exists.
-  3. Run YouTube-Lite.exe.
-  4. Type a search and press Enter. Nothing loads before you search.
+1. INSTALL PYTHON
+-----------------
+Install Python 3.11.x 64-bit:
+https://www.python.org/downloads/release/python-3119/
 
-GETTING MPV
-  Download a Windows build of mpv from https://mpv.io/installation/ (Windows
-  builds section), extract it, and copy mpv.exe (and any DLLs/folders that came
-  with it) into the "mpv" folder next to YouTube-Lite.exe. Pick the plain
-  x86_64 build (not -v3). The "mpv.conf" in that folder holds conservative
-  settings; options your mpv build does not know are skipped automatically.
+During setup:
+- Check "Add python.exe to PATH".
+- Install pip.
+- Tkinter is included with the standard Windows installer.
 
-USING IT
-  Header: search box, performance mode (ECO / BALANCED / QUALITY, switch any
-  time), ad-blocker indicator, settings.
-  Click a video: the stream information is read (nothing is downloaded), then
-  mpv opens at the default quality (ECO: 360p). On the player page you can pick
-  another quality (144p-1080p where YouTube offers it) and press "Open player";
-  playback resumes at the current position.
-  mpv has its own on-screen controls (play/pause, seek, volume, fullscreen,
-  speed). The player page also has buttons for the common ones.
-  Sidebar: Home (recently played), Search, Trending (topic searches),
-  Subscriptions (channels you save locally), History, Watch Later, Playlists,
-  Settings. Use the "..." button on a card for more actions.
+2. INSTALL MPV
+--------------
+Download a 64-bit Windows MPV build from the MPV project/community builds:
+https://mpv.io/installation/
 
-PERFORMANCE MODES
-  ECO (default)  10 results/page, small thumbnails, 360p default, minimal cache.
-  BALANCED       15 results/page, normal thumbnails, moderate cache.
-  QUALITY        20 results/page, larger thumbnails, more cache, extra metadata.
+Extract the archive. Find the folder containing mpv-2.dll or libmpv-2.dll.
+Create a folder named "mpv" beside youtube_lite.py and copy the DLL and
+the MPV runtime files needed by that build into it. Keep the MPV scripts
+folder if included (MPV's ytdl_hook script is needed).
 
-QUALITY ON THIS LAPTOP (honest expectations)
-  Resolution being AVAILABLE does not mean it will play SMOOTHLY.
-  * 240p/360p/480p: expected to be fine.
-  * 720p H.264 at 24-30 fps: the main high-quality target. It may work if the
-    Intel HD Graphics decodes H.264 in hardware (mpv must report it; the player
-    page shows "decoding: hardware (...)" or "software" as measured by mpv).
-  * 1080p: experimental. Do not expect smooth playback without testing.
-  * VP9 / AV1 / HEVC: not hardware-decoded by this generation; avoided by
-    default (H.264 is preferred). The quality table says when no H.264 exists.
-  If frames are dropped or decoding is software, the player page recommends a
-  lower resolution.
-  Measured numbers for the real machine are in PERFORMANCE_REPORT.md; values
-  that have not been measured are marked as such.
+The app searches:
+- .\mpv\
+- the application folder
+- C:\mpv
+- C:\Program Files\mpv
+- MPV_HOME environment variable
 
-WEB MODE
-  "Open in browser (Web Mode)" opens the video on youtube.com in YOUR browser,
-  only when you click it. Browsers can use several hundred MB of RAM. The native
-  player does not depend on it, and it is not the full YouTube website.
+If your build names the library libmpv-2.dll, the app accepts that too.
+Some builds need additional DLLs from the same archive. Keep those files
+together in the mpv folder.
 
-AD / TRACKER BLOCKER (optional, default OFF)
-  Controls: thumbnail downloads made by YouTube Lite and a host check on
-  stream addresses before they go to mpv or your browser.
-  Does NOT control: anything mpv or your browser requests afterwards, or ads
-  served from the same servers as the video. It does not modify the Windows
-  hosts file, firewall or browsers, never installs extensions and never touches
-  sign-in. YouTube/Google playback domains are protected. Do not expect
-  universal ad removal. Lists: filters\blocklist.txt, filters\allowlist.txt,
-  plus an optional list you download manually (Settings > Ad blocker).
+3. INSTALL PYTHON PACKAGES
+--------------------------
+Open Command Prompt in this project folder and run:
 
-PRIVACY AND SECURITY
-  No telemetry, no account, no Google password, no cookies. Network requests go
-  only to YouTube (via yt-dlp), YouTube image servers (thumbnails), and the
-  filter-list address if YOU press "Update filter list". HTTPS only, with
-  timeouts. mpv is started with an argument list (never through a shell).
-  Downloaded filter lists are parsed as plain domain names, never executed.
-  History, playlists and settings stay in this folder. Settings > Storage has
-  buttons to clear everything.
+    python -m pip install --no-cache-dir python-mpv yt-dlp
 
-UNINSTALL
-  Close YouTube Lite, then run Uninstall-YouTube-Lite.bat (inside the folder).
-  It asks for confirmation and deletes the whole folder. Or just delete the
-  folder yourself: nothing else is installed on the computer.
+MPV's ytdl_hook must be able to find yt-dlp.exe. The app adds the Python
+Scripts directory to PATH if yt-dlp is discoverable there.
 
-FOLDERS (portable)
-  YouTube-Lite.exe        the program   (plus a "_internal" folder with its libraries)
-  config\settings.json    settings
-  data\history.db         history, watch later, playlists, saved channels
-  cache\thumbnails, cache\metadata   size-limited caches (defaults 30 MB / 5 MB)
-  filters\                blocklist.txt, allowlist.txt, downloaded.txt
-  mpv\                    mpv.exe, mpv.conf
-  runtime\                deno.exe (needed by yt-dlp for YouTube)
-  logs\                   small rotating log (default max 2 MB)
-  Nothing is written to the registry, AppData, or anywhere outside this folder.
+4. GET YOUR OWN YOUTUBE API KEY
+-------------------------------
+A. Open https://console.cloud.google.com/
+B. Create a project.
+C. Enable YouTube Data API v3:
+   https://console.cloud.google.com/apis/library/youtube.googleapis.com
+D. Create an API key:
+   https://console.cloud.google.com/apis/credentials
+E. Restrict the key to YouTube Data API v3.
+F. Open YouTube Lite > Settings and paste the key.
 
-LIMITS OF THIS VERSION
-  * Live streams and premieres are not supported (use Web Mode).
-  * No sign-in: no private videos, age-restricted videos, members-only content,
-    or your real YouTube subscriptions/playlists.
-  * YouTube's own Trending feed is not available through yt-dlp; the Trending
-    page runs ordinary topic searches.
-  * Channel search uses YouTube's website search filter through yt-dlp and may
-    break when YouTube changes.
-  * YouTube changes often. When searching/playing stops working, yt-dlp must be
-    updated by rebuilding (see TROUBLESHOOTING.txt).
+Do not publish your API key in public source repositories. The app stores
+the key locally in:
+    %APPDATA%\YouTubeLite\settings.json
 
-BUILDING FROM SOURCE
-  Install 64-bit Python 3.9+, then run build_windows.bat. For development run
-  run_dev.bat. Put mpv in third_party\mpv before building to have it copied in.
+5. RUN
+------
+From Command Prompt:
 
-YouTube Lite is an independent project, not affiliated with or endorsed by
-YouTube or Google. Respect YouTube's Terms of Service. See LICENSES.txt.
+    python youtube_lite.py
+
+6. LOW-MEMORY TIPS
+------------------
+- Close other browser tabs and unnecessary applications.
+- Start at 360p.
+- Try hardware decoding "auto-safe".
+- If video is corrupted or crashes, change hardware decoding to "no".
+- If playback stutters, try 480p only if the laptop can handle it.
+- Avoid running multiple instances.
+- Keep Windows page-file/system-managed virtual memory enabled.
+- The player uses a small MPV cache; network buffering still varies.
+
+7. TROUBLESHOOTING
+------------------
+"MPV DLL not found":
+- Check that mpv-2.dll or libmpv-2.dll is in the mpv folder beside the
+  Python file.
+- Keep dependent DLLs from the same MPV archive in that folder.
+- Ensure both Python and MPV are 64-bit.
+
+"yt-dlp not found" / YouTube extraction fails:
+    python -m pip install --upgrade yt-dlp
+
+"API key not valid":
+- Confirm YouTube Data API v3 is enabled.
+- Check that the API key restriction allows YouTube Data API v3.
+- Check quota and Google Cloud project.
+
+"Video playback fails":
+- Update yt-dlp.
+- Check whether MPV's ytdl_hook.lua script is present in the MPV scripts
+  directory in your build.
+- Some videos may be age-restricted, private, region-restricted, or
+  otherwise unavailable to third-party players.
+
+NOTES
+-----
+- Search uses the official YouTube Data API.
+- Playback resolution uses yt-dlp and MPV, not the Data API.
+- This app does not download video files.
+- Use the player in accordance with YouTube's terms and applicable law.
+- YouTube API quota and terms apply.
